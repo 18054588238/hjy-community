@@ -14,7 +14,7 @@ import java.util.Map;
  * @ClassName BaseEntity
  * @Author liupanpan
  * @Date 2025/11/30
- * @Description
+ * @Description 基类 定义所有实体都会用到的字段
  */
 @Data
 public class BaseEntity implements Serializable {

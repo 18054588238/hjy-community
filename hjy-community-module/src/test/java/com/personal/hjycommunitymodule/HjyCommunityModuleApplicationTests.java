@@ -8,6 +8,7 @@ class HjyCommunityModuleApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }

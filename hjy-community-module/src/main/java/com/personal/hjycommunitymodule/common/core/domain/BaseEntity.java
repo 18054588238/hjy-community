@@ -22,18 +22,18 @@ public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableField(fill = FieldFill.INSERT)
-    private String createdBy;
+    private String createBy;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private String updatedBy;
+    private String updateBy;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updatedTime;
+    private LocalDateTime updateTime;
 
     // 备注
     private String remark;

@@ -6,7 +6,7 @@ import lombok.Data;
  * @ClassName PageDomain
  * @Author liupanpan
  * @Date 2025/12/2
- * @Description 分页数据对象
+ * @Description 封装分页请求对象
  */
 @Data
 public class PageDomain {

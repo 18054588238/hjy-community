@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class HjyCommunityDto extends HjyCommunity {
 
-    private String communityProvenceName;
+    private String communityProvinceName;
 
     private String communityCityName;
 

@@ -1,5 +1,6 @@
 package com.personal.hjycommunitymodule.common.core.page;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -9,6 +10,7 @@ import lombok.Data;
  * @Description 封装分页请求对象
  */
 @Data
+@AllArgsConstructor
 public class PageDomain {
     /* 当前记录起始索引 */
     private Integer pageNum;

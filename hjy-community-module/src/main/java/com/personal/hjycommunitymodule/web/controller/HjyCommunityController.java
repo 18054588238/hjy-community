@@ -23,25 +23,20 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/community")
-public class HjyCommunityController {
+public class HjyCommunityController extends BaseController {
     @Autowired
     private HjyCommunityService hjyCommunityService;
 
+    // 获取小区信息列表
     @GetMapping("/list")
     public PageResult getHjyCommunityList(HjyCommunity hjyCommunity){
-        // 获取分页参数
-        Integer pageNum = ServletUtils.getParameterToInt("pageNum");
-        Integer pageSize = ServletUtils.getParameterToInt("pageSize");
-        PageHelper.startPage(pageNum, pageSize);// 会自动执行分页操作
+        startPage();
 
         List<HjyCommunityDto> dtos = hjyCommunityService.queryList(hjyCommunity);
 
-        PageResult pageResult = new PageResult();
-        pageResult.setCode(HttpStatus.SUCCESS);
-        pageResult.setMsg("查询成功");
-        pageResult.setRows(dtos);
-        pageResult.setTotal(new PageInfo(dtos).getTotal()); // 获取总条数
-
-        return pageResult;
+        return getPageResult(dtos);
     }
+
+    // 新增小区信息
+
 }

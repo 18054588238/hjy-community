@@ -40,7 +40,7 @@ pagehelper:
 # mybatis-plus??
 mybatis-plus:
   # ????XXXmapper.xml????????????????????????
-  type-aliases-package: com.personal.hjycommunity.**.domain
+  type-aliases-package: com.personal.hjycommunitymodule.**.domain
   mapper-locations: classpath*:/mapper/**/*.xml
   # mybatis-config ??????
   config-location: classpath:mybatis/mybatis-config.xml

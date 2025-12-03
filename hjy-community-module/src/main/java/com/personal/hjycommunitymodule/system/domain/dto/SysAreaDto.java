@@ -1,6 +1,5 @@
-package com.personal.hjycommunitymodule.community.domain.dto;
+package com.personal.hjycommunitymodule.system.domain.dto;
 
-import com.personal.hjycommunitymodule.community.domain.SysArea;
 import lombok.Builder;
 import lombok.Data;
 

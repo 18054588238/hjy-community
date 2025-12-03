@@ -15,4 +15,12 @@ import java.util.List;
 public interface HjyCommunityService extends IService<HjyCommunity> {
     // 带条件查询小区信息
     List<HjyCommunityDto> queryList(HjyCommunity hjyCommunity);
+    // 新增
+    Integer addHjyCommunity(HjyCommunity hjyCommunity);
+
+    HjyCommunity findById(Long communityId);
+
+    Integer updateCommunity(HjyCommunity hjyCommunity);
+
+    Integer deleteCommunity(List<Long> communityIds);
 }

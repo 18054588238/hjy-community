@@ -1,7 +1,7 @@
-package com.personal.hjycommunitymodule.community.mapper;
+package com.personal.hjycommunitymodule.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.personal.hjycommunitymodule.community.domain.SysArea;
+import com.personal.hjycommunitymodule.system.domain.SysArea;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
-package com.personal.hjycommunitymodule.community.service;
+package com.personal.hjycommunitymodule.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.personal.hjycommunitymodule.community.domain.SysArea;
-import com.personal.hjycommunitymodule.community.domain.dto.SysAreaDto;
+import com.personal.hjycommunitymodule.system.domain.SysArea;
+import com.personal.hjycommunitymodule.system.domain.dto.SysAreaDto;
 
 import java.util.List;
 

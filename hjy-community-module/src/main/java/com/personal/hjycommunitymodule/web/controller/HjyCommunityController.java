@@ -1,17 +1,14 @@
 package com.personal.hjycommunitymodule.web.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.personal.hjycommunitymodule.common.constant.HttpStatus;
+import com.personal.hjycommunitymodule.common.core.controller.BaseController;
+import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.common.core.page.PageResult;
-import com.personal.hjycommunitymodule.common.utils.ServletUtils;
 import com.personal.hjycommunitymodule.community.domain.HjyCommunity;
 import com.personal.hjycommunitymodule.community.domain.dto.HjyCommunityDto;
 import com.personal.hjycommunitymodule.community.service.HjyCommunityService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,5 +35,27 @@ public class HjyCommunityController extends BaseController {
     }
 
     // 新增小区信息
+    @PostMapping("/add")
+    public BaseResponse add(@RequestBody HjyCommunity hjyCommunity){
+        return getBaseResponse(hjyCommunityService.addHjyCommunity(hjyCommunity));
+    }
+
+    // 修改小区信息 - 回显数据
+    @GetMapping("/findById/{communityId}")
+    public BaseResponse findById(@PathVariable Long communityId){
+        return BaseResponse.success(hjyCommunityService.findById(communityId));
+    }
+
+    // 修改小区信息
+    @PutMapping("/update")
+    public BaseResponse updateCommunity(@RequestBody HjyCommunity hjyCommunity){
+        return getBaseResponse(hjyCommunityService.updateCommunity(hjyCommunity));
+    }
+
+    // 删除小区信息
+    @DeleteMapping("/delete/{communityIds}")
+    public BaseResponse delete(@PathVariable List<Long> communityIds){
+        return getBaseResponse(hjyCommunityService.deleteCommunity(communityIds));
+    }
 
 }

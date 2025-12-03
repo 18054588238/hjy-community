@@ -1,14 +1,13 @@
-package com.personal.hjycommunitymodule.community.service.impl;
+package com.personal.hjycommunitymodule.system.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.personal.hjycommunitymodule.community.domain.SysArea;
-import com.personal.hjycommunitymodule.community.domain.dto.SysAreaDto;
-import com.personal.hjycommunitymodule.community.mapper.SysAreaMapper;
-import com.personal.hjycommunitymodule.community.service.SysAreaService;
+import com.personal.hjycommunitymodule.system.domain.SysArea;
+import com.personal.hjycommunitymodule.system.domain.dto.SysAreaDto;
+import com.personal.hjycommunitymodule.system.mapper.SysAreaMapper;
+import com.personal.hjycommunitymodule.system.service.SysAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +37,11 @@ public class SysAreaServiceImpl extends ServiceImpl<SysAreaMapper, SysArea> impl
     }
 
     private List<SysAreaDto> getChildren(Integer code,List<SysArea> sysAreaList) {
+        List<SysArea> sysAreas = sysAreaList.stream()
+                .filter(i -> i.getParentCode().equals(code)).collect(Collectors.toList());
+        if (sysAreas == null || sysAreas.isEmpty()) {
+            return null;
+        }
         return sysAreaList.stream()
                 .filter(i->i.getParentCode().equals(code))
                 .map(i->

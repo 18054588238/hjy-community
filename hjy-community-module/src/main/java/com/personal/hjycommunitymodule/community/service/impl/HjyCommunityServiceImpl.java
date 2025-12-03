@@ -23,9 +23,32 @@ public class HjyCommunityServiceImpl extends ServiceImpl<HjyCommunityMapper, Hjy
     @Autowired
     private HjyCommunityMapper hjyCommunityMapper;
 
+    private static final String CODE_PREFIX = "COMMUNITY_";
+
     @Override
     public List<HjyCommunityDto> queryList(HjyCommunity hjyCommunity) {
 
         return hjyCommunityMapper.queryList(hjyCommunity);
+    }
+
+    @Override
+    public Integer addHjyCommunity(HjyCommunity hjyCommunity) {
+        hjyCommunity.setCommunityCode(CODE_PREFIX + System.currentTimeMillis());
+        return hjyCommunityMapper.insert(hjyCommunity);
+    }
+
+    @Override
+    public HjyCommunity findById(Long communityId) {
+        return hjyCommunityMapper.selectById(communityId);
+    }
+
+    @Override
+    public Integer updateCommunity(HjyCommunity hjyCommunity) {
+        return hjyCommunityMapper.updateById(hjyCommunity);
+    }
+
+    @Override
+    public Integer deleteCommunity(List<Long> communityIds) {
+        return hjyCommunityMapper.deleteBatchIds(communityIds);
     }
 }

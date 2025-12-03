@@ -1,6 +1,8 @@
-package com.personal.hjycommunitymodule.community.domain;
+package com.personal.hjycommunitymodule.system.domain;
 
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * @ClassName SysArea
@@ -9,7 +11,10 @@ import lombok.Data;
  * @Description 区域信息
  */
 @Data
-public class SysArea {
+public class SysArea implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     // 区划码
     private Integer code;
     // 区划名称

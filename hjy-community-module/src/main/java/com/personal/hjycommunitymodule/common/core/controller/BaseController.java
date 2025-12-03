@@ -1,8 +1,9 @@
-package com.personal.hjycommunitymodule.web.controller;
+package com.personal.hjycommunitymodule.common.core.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.personal.hjycommunitymodule.common.constant.HttpStatus;
+import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.common.core.page.PageDomain;
 import com.personal.hjycommunitymodule.common.core.page.PageResult;
 import com.personal.hjycommunitymodule.common.utils.ServletUtils;
@@ -45,6 +46,15 @@ public class BaseController {
         pageResult.setTotal(new PageInfo(rows).getTotal()); // 获取总条数
 
         return pageResult;
+    }
+
+    // 封装响应信息
+    public BaseResponse getBaseResponse(Integer rows) {
+        if (rows > 0) {
+            return BaseResponse.success(rows);
+        }else {
+            return BaseResponse.fail("操作失败");
+        }
     }
 
 }

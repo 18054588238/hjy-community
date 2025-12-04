@@ -41,7 +41,7 @@ public class HjyCommunityController extends BaseController {
     }
 
     // 修改小区信息 - 回显数据
-    @GetMapping("/findById/{communityId}")
+    @GetMapping("/{communityId}")
     public BaseResponse findById(@PathVariable Long communityId){
         return BaseResponse.success(hjyCommunityService.findById(communityId));
     }
@@ -57,5 +57,8 @@ public class HjyCommunityController extends BaseController {
     public BaseResponse delete(@PathVariable List<Long> communityIds){
         return getBaseResponse(hjyCommunityService.deleteCommunity(communityIds));
     }
+
+
+
 
 }

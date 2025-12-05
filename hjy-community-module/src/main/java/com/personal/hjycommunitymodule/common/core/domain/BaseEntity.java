@@ -36,6 +36,7 @@ public class BaseEntity implements Serializable {
     private LocalDateTime updateTime;
 
     // 备注
+    @TableField(exist = false)
     private String remark;
 
     // 搜索值

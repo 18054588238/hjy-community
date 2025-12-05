@@ -27,7 +27,7 @@ public class SysDeptController extends BaseController {
 
     // 更换小区物业 - 获取物业公司信息
     @GetMapping("/list")
-    public BaseResponse list(@RequestBody SysDept sysDept) {
+    public BaseResponse list(SysDept sysDept) {
         // 参数sysDept暂时未用到，后面可能会用到，到时候再补充
         List<SysDept> list = sysDeptService.getDeptList(sysDept);
         return BaseResponse.success(list);

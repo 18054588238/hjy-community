@@ -252,6 +252,12 @@
             <artifactId>lombok</artifactId>
             <version>1.18.42</version>
         </dependency>
+        <!-- 对象属性拷贝 -->
+        <dependency>
+            <groupId>ma.glasnost.orika</groupId>
+            <artifactId>orika-core</artifactId>
+            <version>1.5.4</version>
+        </dependency>
 
     </dependencies>
 

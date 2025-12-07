@@ -3,6 +3,7 @@ package com.personal.hjycommunitymodule.community.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.personal.hjycommunitymodule.community.domain.HjyCommunity;
 import com.personal.hjycommunitymodule.community.domain.dto.HjyCommunityDto;
+import com.personal.hjycommunitymodule.community.domain.vo.HjyCommunityVo;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface HjyCommunityService extends IService<HjyCommunity> {
     Integer updateCommunity(HjyCommunity hjyCommunity);
 
     Integer deleteCommunity(List<Long> communityIds);
+
+    List<HjyCommunityVo> queryPullDown();
 }

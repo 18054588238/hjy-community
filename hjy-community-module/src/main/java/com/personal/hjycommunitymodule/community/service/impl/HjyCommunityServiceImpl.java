@@ -1,15 +1,19 @@
 package com.personal.hjycommunitymodule.community.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.personal.hjycommunitymodule.common.utils.OrikaUtils;
 import com.personal.hjycommunitymodule.community.domain.HjyCommunity;
 import com.personal.hjycommunitymodule.community.domain.dto.HjyCommunityDto;
+import com.personal.hjycommunitymodule.community.domain.vo.HjyCommunityVo;
 import com.personal.hjycommunitymodule.community.mapper.HjyCommunityMapper;
 import com.personal.hjycommunitymodule.community.service.HjyCommunityService;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName HjyCommunityServiceImpl
@@ -50,5 +54,13 @@ public class HjyCommunityServiceImpl extends ServiceImpl<HjyCommunityMapper, Hjy
     @Override
     public Integer deleteCommunity(List<Long> communityIds) {
         return hjyCommunityMapper.deleteBatchIds(communityIds);
+    }
+
+    @Override
+    public List<HjyCommunityVo> queryPullDown() {
+        List<HjyCommunity> hjyCommunities = hjyCommunityMapper.selectList(null);
+        return hjyCommunities.stream().map(community ->
+                OrikaUtils.convert(community, HjyCommunityVo.class))
+                .collect(Collectors.toList());
     }
 }

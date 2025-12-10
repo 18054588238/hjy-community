@@ -43,6 +43,7 @@ public class LoginServiceImpl implements LoginService {
 
         // 将用户信息存储到redis缓存中
         redisCache.setCacheObject("login:"+userId,principal);
+
         HashMap<String, String> map = new HashMap<>();
         map.put("token",jwt);
         return BaseResponse.success(map);

@@ -5,7 +5,9 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
 
@@ -41,5 +43,13 @@ class HjyCommunityModuleApplicationTests {
                 .parseClaimsJws(jws)
                 .getBody();
         System.out.println(claims);// 输出payload中的内容
+    }
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Test
+    void encode() {
+        String encode = passwordEncoder.encode("123456");
+        System.out.println(encode);
     }
 }

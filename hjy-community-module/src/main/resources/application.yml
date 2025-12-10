@@ -4,6 +4,10 @@ spring:
     name: hjy-community-module
   profiles:
     active: druid
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
 
 # ??????
 hjy-community:
@@ -50,3 +54,4 @@ mybatis-plus:
       # id???????id
       id-type: assign_id
     banner: false # ??mybatis-plus ?banner
+

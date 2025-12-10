@@ -22,6 +22,7 @@ public class LoginController extends BaseController {
 
     @PostMapping("/user/login")
     public BaseResponse login(@RequestBody SysUser user) {
+        System.out.println("---------");
         return loginService.login(user);
     }
 }

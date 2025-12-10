@@ -17,13 +17,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * @ClassName JwtAuthenticationTokenFilter
  * @Author liupanpan
  * @Date 2025/12/10
- * @Description 自定义一个过滤器，获取请求头中的token，对token进行解析取出其中的userId（通过userId去redis获取用户信息）
+ * @Description 自定义一个过滤器，放在UsernamePasswordAuthenticationFilter前面，
+ * 获取请求头中的token，对token进行解析取出其中的userId（通过userId去redis获取用户信息、权限信息）
  * 继承OncePerRequestFilter，简化过滤器的编写，确保每个请求只被过滤一次，避免多次过滤的问题
  */
 @Component
@@ -32,9 +36,19 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private RedisCache redisCache;
 
+    private final List<String> excludeUrls = Arrays.asList(
+            "/user/login"
+    );
+
     // 封装过滤器的执行逻辑
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String path = request.getServletPath();
+//        System.out.println("path:" + path);
+        if (isExcludeUrl(path)) {
+            filterChain.doFilter(request, response);// 登录路径放行
+            return;
+        }
         // 从请求头中获取token - 请求头名称是前后端约定好的
         // 使用"token"这个请求头来传递JWT令牌。前端在发送请求时，需要在请求头中设置名为"token"的字段，其值为JWT令牌。
         String jwt = request.getHeader("token");
@@ -63,10 +77,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if (Objects.isNull(user)) {
             throw new RuntimeException("用户未登录");
         }
-        // 将用户保存到SecurityContextHolder中
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, null);
+        // 将 用户信息和权限信息 保存到SecurityContextHolder中
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user,
+                null,
+                user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         // 放行
         filterChain.doFilter(request,response);
+    }
+
+    private boolean isExcludeUrl(String url) {
+        return excludeUrls.stream().anyMatch(url::startsWith);
     }
 }

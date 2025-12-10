@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * @ClassName LoginServiceImpl
@@ -28,6 +30,7 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     RedisCache redisCache;
 
+    // 2
     @Override
     public BaseResponse login(SysUser user) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword());
@@ -47,5 +50,21 @@ public class LoginServiceImpl implements LoginService {
         HashMap<String, String> map = new HashMap<>();
         map.put("token",jwt);
         return BaseResponse.success(map);
+    }
+
+    @Override
+    public BaseResponse logout() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (Objects.isNull(authentication)) {
+            throw new RuntimeException("获取用户认证信息失败,请重新登录!");
+        }
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        Long userId = loginUser.getSysUser().getUserId();
+        // 删除redis缓存
+        boolean b = redisCache.deleteObject("login:" + userId);
+        if (b) {
+            return BaseResponse.success("已退出登录");
+        }
+        return BaseResponse.success("退出失败");
     }
 }

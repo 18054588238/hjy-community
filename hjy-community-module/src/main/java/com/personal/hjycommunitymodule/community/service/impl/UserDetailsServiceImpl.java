@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,6 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private SysUserMapper userMapper;
 
+    // 1
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
@@ -31,6 +35,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (sysUser == null) {
             throw new RuntimeException(("用户名或密码错误"));
         }
-        return new LoginUser(sysUser);
+        // todo 数据库查询 存储授权信息
+        List<String> list = new ArrayList<>(Collections.singletonList("add"));
+        return new LoginUser(sysUser,list);
     }
 }

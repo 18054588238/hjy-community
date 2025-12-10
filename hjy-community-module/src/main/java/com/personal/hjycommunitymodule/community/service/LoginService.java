@@ -12,4 +12,6 @@ import com.personal.hjycommunitymodule.community.domain.SysUser;
 public interface LoginService {
 
     BaseResponse login(SysUser user);
+
+    BaseResponse logout();
 }

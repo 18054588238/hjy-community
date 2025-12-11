@@ -3,6 +3,7 @@ package com.personal.hjycommunitymodule.community.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.personal.hjycommunitymodule.community.domain.LoginUser;
 import com.personal.hjycommunitymodule.community.domain.SysUser;
+import com.personal.hjycommunitymodule.community.mapper.SysMenuMapper;
 import com.personal.hjycommunitymodule.community.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +26,8 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private SysUserMapper userMapper;
+    @Autowired
+    private SysMenuMapper menuMapper;
 
     // 1
     @Override
@@ -36,7 +39,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new RuntimeException(("用户名或密码错误"));
         }
         // todo 数据库查询 存储授权信息
-        List<String> list = new ArrayList<>(Collections.singletonList("add"));
+//        List<String> list = new ArrayList<>(Collections.singletonList("add"));
+        List<String> list = menuMapper.selectPermsByUserId(sysUser.getUserId());
         return new LoginUser(sysUser,list);
     }
 }

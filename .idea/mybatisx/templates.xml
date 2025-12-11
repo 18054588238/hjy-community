@@ -61,7 +61,7 @@
                 </ModuleInfoGo>
               </list>
             </option>
-            <option name="needToStringHashcodeEquals" value="true" />
+            <option name="needSerializable" value="true" />
             <option name="needsComment" value="true" />
             <option name="needsModel" value="true" />
             <option name="relativePackage" value="domain" />
@@ -69,12 +69,25 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="SysUser" />
-                  <option name="tableName" value="sys_user" />
+                  <option name="className" value="SysUserRole" />
+                  <option name="tableName" value="sys_user_role" />
+                </TableUIInfo>
+                <TableUIInfo>
+                  <option name="className" value="SysRoleMenu" />
+                  <option name="tableName" value="sys_role_menu" />
+                </TableUIInfo>
+                <TableUIInfo>
+                  <option name="className" value="SysRole" />
+                  <option name="tableName" value="sys_role" />
+                </TableUIInfo>
+                <TableUIInfo>
+                  <option name="className" value="SysMenu" />
+                  <option name="tableName" value="sys_menu" />
                 </TableUIInfo>
               </list>
             </option>
             <option name="templatesName" value="mybatis-plus3" />
+            <option name="useLombokPlugin" value="true" />
           </GenerateConfig>
         </option>
         <option name="moduleName" value="easy_code" />

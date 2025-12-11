@@ -40,4 +40,13 @@ public class LoginController extends BaseController {
     public String hello() {
         return "hello";
     }
+
+    @GetMapping("/test")
+    /*当使用 @PreAuthorize("hasAuthority('add1')") 注解时，
+    Spring Security 会自动从 SecurityContext 中获取 Authentication 信息来评估权限
+    客户端请求 → Spring Security 过滤器链 → SecurityContextHolder → Authentication → 权限评估*/
+    @PreAuthorize("hasAuthority('小区信息')")
+    public String test() {
+        return "test";
+    }
 }

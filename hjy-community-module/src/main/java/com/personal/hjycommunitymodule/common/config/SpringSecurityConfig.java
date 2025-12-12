@@ -1,5 +1,7 @@
 package com.personal.hjycommunitymodule.common.config;
 
+import com.personal.hjycommunitymodule.common.exception.AccessDeniedHandlerImpl;
+import com.personal.hjycommunitymodule.common.exception.AuthenticationEntryPointImpl;
 import com.personal.hjycommunitymodule.common.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +30,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+    @Autowired
+    private AccessDeniedHandlerImpl accessDeniedHandler;
+    @Autowired
+    private AuthenticationEntryPointImpl authenticationEntryPoint;
+
     // 编码方式
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -48,6 +55,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         ;
         // 将自定义认证过滤器，添加到过滤器链中
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // 配置认证、授权失败处理器
+        http.exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler);
     }
 
     // 注入AuthenticationManager，供外部使用

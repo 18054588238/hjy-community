@@ -45,12 +45,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     // 配置http请求的安全处理
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // 关闭csrf - 前后端分离的 RESTful API必须禁用csrf，前端不是通过表单提交，而是 AJAX/Fetch
+        //不使用 Session，而是 JWT/OAuth 等无状态认证
+        http.csrf().disable();
+        // 允许跨域 - 项目资源受到spring security保护，所以要在spring security设置允许跨域
+        http.cors();
+
         http
-                .csrf().disable() // 关闭csrf
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)// 不会创建会话，每个请求都将被视为独立的请求
                 .and()
                 .authorizeRequests() // 定义请求授权规则
                 .antMatchers("/user/login").permitAll()//登录接口，允许匿名访问
+                .antMatchers("/config").hasAuthority("小区信息") // 配置形式的权限控制
                 .anyRequest().authenticated()
         ;
         // 将自定义认证过滤器，添加到过滤器链中
@@ -60,6 +66,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler);
+
     }
 
     // 注入AuthenticationManager，供外部使用

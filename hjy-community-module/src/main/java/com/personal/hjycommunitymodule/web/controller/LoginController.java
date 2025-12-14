@@ -42,11 +42,33 @@ public class LoginController extends BaseController {
     }
 
     @GetMapping("/test")
-    /*当使用 @PreAuthorize("hasAuthority('add1')") 注解时，
-    Spring Security 会自动从 SecurityContext 中获取 Authentication 信息来评估权限
-    客户端请求 → Spring Security 过滤器链 → SecurityContextHolder → Authentication → 权限评估*/
-    @PreAuthorize("hasAuthority('小区信息')")
+    @PreAuthorize("hasAnyAuthority('小区信息','add1')")
     public String test() {
         return "test";
+    }
+
+    @GetMapping("/role")
+    // 内部会把传入的参数拼接上ROLE_再去比较，所以从数据库查询出来的角色在比较之前也要加上ROLE_
+    @PreAuthorize("hasAnyRole('普通用户','超级管理员')")
+    public String role() {
+        return "role";
+    }
+
+    @GetMapping("/myPerm")
+    // 使用自定义权限校验
+    @PreAuthorize("@my_ex.hasAuthority('小区信息')")
+    public String myPerm() {
+        return "myPerm";
+    }
+
+    @GetMapping("/config")
+    // 通过配置方式进行权限校验
+    public String config() {
+        return "config";
+    }
+
+    @PostMapping("/testCors")
+    public BaseResponse testCors() {
+        return BaseResponse.success("testCors");
     }
 }

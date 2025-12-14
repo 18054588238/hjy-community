@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.personal.hjycommunitymodule.community.domain.LoginUser;
 import com.personal.hjycommunitymodule.community.domain.SysUser;
 import com.personal.hjycommunitymodule.community.mapper.SysMenuMapper;
+import com.personal.hjycommunitymodule.community.mapper.SysRoleMapper;
 import com.personal.hjycommunitymodule.community.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +29,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private SysUserMapper userMapper;
     @Autowired
     private SysMenuMapper menuMapper;
+    @Autowired
+    private SysRoleMapper roleMapper;
 
     // 1
     @Override
@@ -40,7 +43,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         // todo 数据库查询 存储授权信息
 //        List<String> list = new ArrayList<>(Collections.singletonList("add"));
-        List<String> list = menuMapper.selectPermsByUserId(sysUser.getUserId());
-        return new LoginUser(sysUser,list);
+        List<String> perms = menuMapper.selectPermsByUserId(sysUser.getUserId());
+        List<String> roles = roleMapper.selectRolesByUserId(sysUser.getUserId());
+        return new LoginUser(sysUser,perms,roles);
     }
 }

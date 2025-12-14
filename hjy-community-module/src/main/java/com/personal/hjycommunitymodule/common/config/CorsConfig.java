@@ -1,8 +1,14 @@
 package com.personal.hjycommunitymodule.common.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
 
 /**
  * @ClassName CorsConfig
@@ -32,7 +38,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 //注意：此选项会与已配置的域建立高度信任关系，但同时也会增加 Web 应用程序的攻击面，因为它会暴露敏感的用户特定信息，例如 Cookie 和 CSRF 令牌。
                 //默认情况下，此选项未设置，因此 Access-Control-Allow-Credentials 标头也未设置，凭据将无法使用。
                 .allowCredentials(true)
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 // 设置预检请求中允许在实际请求中使用的标头列表。
                 //可以使用特殊值“*”来允许所有标头。
                 //如果标头名称属于 CORS 规范中的以下类型之一，则无需列出：Cache-Control、Content-Language、Expires、Last-Modified 或 Pragma。

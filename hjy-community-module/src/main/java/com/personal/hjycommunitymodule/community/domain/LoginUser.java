@@ -25,18 +25,27 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginUser implements UserDetails {
+
     private SysUser sysUser;
 
-    private List<String> authorities;
+    private List<String> permissions;
+
+    private List<String> roles;
 
     /*权限信息通常只在后端使用，返回给前端用户信息时不需要包含权限列表
     * 当字段被标记为不序列化时，返回给前端的 JSON 数据中完全不会有这个字段*/
     @JSONField(serialize = false) // 被标注的字段在序列化（Java对象转JSON字符串）时会被跳过
-    List<SimpleGrantedAuthority> authorityList ;
+    List<SimpleGrantedAuthority> authorities ;
 
     public LoginUser(SysUser sysUser, List<String> authorities) {
         this.sysUser = sysUser;
-        this.authorities = authorities;
+        this.permissions = authorities;
+    }
+
+    public LoginUser(SysUser sysUser, List<String> perms, List<String> roles) {
+        this.sysUser = sysUser;
+        this.permissions = perms;
+        this.roles = roles;
     }
 
     // 1
@@ -44,13 +53,22 @@ public class LoginUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        // 获取授权信息
-        if (authorityList == null) {
-            authorityList = authorities.stream()
+        // 获取授权信息、角色信息
+        if (authorities == null) {
+            authorities = permissions.stream()
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
+
+            List<SimpleGrantedAuthority> authorityList = roles.stream()
+                    .map(i -> new SimpleGrantedAuthority("ROLE_" + i))
+                    .collect(Collectors.toList());
+            authorities.addAll(authorityList);
+
+            roles.stream()
+                    .map(i -> new SimpleGrantedAuthority("ROLE_" + i))
+                    .forEach(authorityList::add);
         }
-        return authorityList;
+        return authorities;
     }
 
     @Override

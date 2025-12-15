@@ -67,6 +67,20 @@ public class LoginController extends BaseController {
         return "config";
     }
 
+    @GetMapping("/roleAndPerm1")
+    // 角色加权限校验
+    @PreAuthorize("hasRole('普通用户') and hasAnyAuthority('小区信息','add1')")
+    public String roleAndPerm1() {
+        return "roleAndPerm1";
+    }
+
+    @GetMapping("/roleAndPerm2")
+    // 角色加权限校验
+    @PreAuthorize("hasRole('超级管理员') or hasAuthority('add1')")
+    public String roleAndPerm2() {
+        return "roleAndPerm2";
+    }
+
     @PostMapping("/testCors")
     public BaseResponse testCors() {
         return BaseResponse.success("testCors");

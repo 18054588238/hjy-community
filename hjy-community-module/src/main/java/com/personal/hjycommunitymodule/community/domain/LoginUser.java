@@ -59,14 +59,9 @@ public class LoginUser implements UserDetails {
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
 
-            List<SimpleGrantedAuthority> authorityList = roles.stream()
-                    .map(i -> new SimpleGrantedAuthority("ROLE_" + i))
-                    .collect(Collectors.toList());
-            authorities.addAll(authorityList);
-
             roles.stream()
                     .map(i -> new SimpleGrantedAuthority("ROLE_" + i))
-                    .forEach(authorityList::add);
+                    .forEach(authorities::add);
         }
         return authorities;
     }

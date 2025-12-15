@@ -14,7 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 /**
  * @ClassName SpringSecurityConfig
@@ -34,6 +36,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private AccessDeniedHandlerImpl accessDeniedHandler;
     @Autowired
     private AuthenticationEntryPointImpl authenticationEntryPoint;
+    @Autowired
+    private AuthenticationSuccessHandler successHandler;
+    @Autowired
+    private LogoutSuccessHandler logoutSuccessHandler;
 
     // 编码方式
     @Bean
@@ -58,6 +64,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/login").permitAll()//登录接口，允许匿名访问
                 .antMatchers("/config").hasAuthority("小区信息") // 配置形式的权限控制
                 .anyRequest().authenticated()
+                .and()
+                .logout()
+                .invalidateHttpSession(true) // 在注销时使 HttpSession 失效
+                .clearAuthentication(true) // 退出时清除认证信息
+                .logoutSuccessHandler(logoutSuccessHandler)
         ;
         // 将自定义认证过滤器，添加到过滤器链中
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);

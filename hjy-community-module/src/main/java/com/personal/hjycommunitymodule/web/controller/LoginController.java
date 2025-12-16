@@ -69,7 +69,7 @@ public class LoginController extends BaseController {
 
     @GetMapping("/roleAndPerm1")
     // 角色加权限校验
-    @PreAuthorize("hasRole('普通用户') and hasAnyAuthority('小区信息','add1')")
+    @PreAuthorize("hasRole('普通角色') and hasAnyAuthority('小区信息','add1')")
     public String roleAndPerm1() {
         return "roleAndPerm1";
     }
@@ -80,6 +80,8 @@ public class LoginController extends BaseController {
     public String roleAndPerm2() {
         return "roleAndPerm2";
     }
+
+
 
     @PostMapping("/testCors")
     public BaseResponse testCors() {

@@ -3,10 +3,12 @@ package com.personal.hjycommunitymodule.web.test;
 import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.common.core.exception.BaseException;
 import org.apache.poi.ss.formula.functions.T;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,7 +19,8 @@ import java.util.List;
  * @Date 2025/12/1
  * @Description
  */
-@RestController
+//@RestController
+@Controller
 public class TestController {
 
     @GetMapping("/test/user")
@@ -43,5 +46,10 @@ public class TestController {
 //            return BaseResponse.fail(fieldErrors.get(0).getDefaultMessage());
         }
         return BaseResponse.success(user);
+    }
+
+    @RequestMapping("/login.html")
+    public String login() {
+        return "login";
     }
 }

@@ -36,7 +36,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private RedisCache redisCache;
 
     private final List<String> excludeUrls = Arrays.asList(
-            "/user/login"
+            "/user/login","/login.html","/test/login"
     );
 
     // 封装过滤器的执行逻辑

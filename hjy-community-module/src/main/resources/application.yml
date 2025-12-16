@@ -8,7 +8,7 @@ spring:
     host: 127.0.0.1
     port: 6379
   thymeleaf:
-#    prefix: classpath:/templates/ # 默认就是classpath:/templates/
+    prefix: classpath:/templates/ # 默认就是classpath:/templates/
 #    suffix: .html # 默认就是.html
 #    encoding: utf-8 #默认值
 #    mode: HTML #默认值

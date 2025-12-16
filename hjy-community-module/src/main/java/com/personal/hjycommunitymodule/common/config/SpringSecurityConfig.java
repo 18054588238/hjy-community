@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -39,6 +40,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationSuccessHandler successHandler;
     @Autowired
+    private AuthenticationFailureHandler failureHandler;
+    @Autowired
     private LogoutSuccessHandler logoutSuccessHandler;
 
     // 编码方式
@@ -57,19 +60,30 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         // 允许跨域 - 项目资源受到spring security保护，所以要在spring security设置允许跨域
         http.cors();
 
-        http
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)// 不会创建会话，每个请求都将被视为独立的请求
-                .and()
-                .authorizeRequests() // 定义请求授权规则
-                .antMatchers("/user/login").permitAll()//登录接口，允许匿名访问
-                .antMatchers("/config").hasAuthority("小区信息") // 配置形式的权限控制
+//        http
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)// 不会创建会话，每个请求都将被视为独立的请求
+//                .and()
+//                .authorizeRequests() // 定义请求授权规则
+//                .antMatchers("/user/login").permitAll()//登录接口，允许匿名访问
+//                .antMatchers("/config").hasAuthority("小区信息") // 配置形式的权限控制
+//                .anyRequest().authenticated()
+//        ;
+        http.authorizeHttpRequests()
+                .mvcMatchers("/hejiayun/login.html","/hejiayun/test/login").permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/hejiayun/login.html")
+                .loginProcessingUrl("/hejiayun/login")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .successHandler(successHandler)
+                .failureHandler(failureHandler)
                 .and()
                 .logout()
                 .invalidateHttpSession(true) // 在注销时使 HttpSession 失效
                 .clearAuthentication(true) // 退出时清除认证信息
-                .logoutSuccessHandler(logoutSuccessHandler)
-        ;
+                .logoutSuccessHandler(logoutSuccessHandler);
         // 将自定义认证过滤器，添加到过滤器链中
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 

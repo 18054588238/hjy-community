@@ -24,7 +24,7 @@ import java.io.IOException;
 public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        BaseResponse<Object> baseResponse = BaseResponse.fail(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase() + "无权限");// Forbidden无权限
+        BaseResponse<Object> baseResponse = BaseResponse.fail(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase() + "无权限",false);// Forbidden无权限
         WebUtils.renderString(response, JSON.toJSONString(baseResponse));
     }
 }

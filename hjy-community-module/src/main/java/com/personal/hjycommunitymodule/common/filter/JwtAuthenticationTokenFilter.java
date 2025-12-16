@@ -1,5 +1,6 @@
 package com.personal.hjycommunitymodule.common.filter;
 
+import com.personal.hjycommunitymodule.common.core.exception.CustomException;
 import com.personal.hjycommunitymodule.common.utils.JWTUtils;
 import com.personal.hjycommunitymodule.common.utils.RedisCache;
 import com.personal.hjycommunitymodule.community.domain.LoginUser;
@@ -36,7 +37,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private RedisCache redisCache;
 
     private final List<String> excludeUrls = Arrays.asList(
-            "/user/login","/login.html","/test/login"
+            "/user/login","/captchaImage"
     );
 
     // 封装过滤器的执行逻辑
@@ -67,14 +68,14 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             Claims claims = JWTUtils.parserJWT(jwt);
             userId = claims.getSubject();
         } catch (Exception e) {
-            throw new RuntimeException("非法token");
+            throw new CustomException(401,"非法token");
         }
 
         // 从redis中获取用户信息
         String redisKey = "login:"+userId;
         LoginUser user = redisCache.getCacheObject(redisKey);
         if (Objects.isNull(user)) {
-            throw new RuntimeException("用户未登录");
+            throw new CustomException(401,"用户未登录");
         }
         // 将 用户信息和权限信息 保存到SecurityContextHolder中
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user,

@@ -2,6 +2,7 @@ package com.personal.hjycommunitymodule.community.service.impl;
 
 import com.personal.hjycommunitymodule.common.constant.Constants;
 import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
+import com.personal.hjycommunitymodule.common.core.exception.CustomException;
 import com.personal.hjycommunitymodule.common.utils.JWTUtils;
 import com.personal.hjycommunitymodule.common.utils.RedisCache;
 import com.personal.hjycommunitymodule.community.domain.LoginUser;
@@ -37,14 +38,20 @@ public class LoginServiceImpl implements LoginService {
     public BaseResponse login(LoginBody user) {
 
         // 校验验证码
-        String code = redisCache.getCacheObject(Constants.CAPTCHA_CODE_KEY + user.getUuid());
+        String key = Constants.CAPTCHA_CODE_KEY + user.getUuid();
+        String code = redisCache.getCacheObject(key);
+        redisCache.deleteObject(key);
 
+        if (Objects.isNull(code) || !code.equalsIgnoreCase(user.getCode())) {
+//            throw new CaptchaException("验证码错误");
+            throw new CustomException(400,"验证码错误");
+        }
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
         // 调用(AuthenticationManager 实现类ProviderManager 委托给)DaoAuthenticationProvider的authenticate方法进行认证
         Authentication authenticate = authenticationManager.authenticate(authentication);
         if (authenticate == null) {
-            throw new RuntimeException("登录失败");// 认证失败
+            throw new CustomException(401,"登录失败");// 认证失败
         }
         // 认证成功，使用userId生成token
         LoginUser principal = (LoginUser) authenticate.getPrincipal();
@@ -63,7 +70,7 @@ public class LoginServiceImpl implements LoginService {
     public BaseResponse logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (Objects.isNull(authentication)) {
-            throw new RuntimeException("获取用户认证信息失败,请重新登录!");
+            throw new CustomException(401,"获取用户认证信息失败,请重新登录!");
         }
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         Long userId = loginUser.getSysUser().getUserId();

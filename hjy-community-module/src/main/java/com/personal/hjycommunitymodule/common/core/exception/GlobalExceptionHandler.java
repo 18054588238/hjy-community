@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Objects;
+
 /**
  * @ClassName GlobalException
  * @Author liupanpan
@@ -18,5 +20,13 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public BaseResponse handleBaseException(BaseException e){
         return BaseResponse.fail(e.getDefaultMessage());
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public BaseResponse handleCustomException(CustomException e) {
+        if (Objects.isNull(e.getCode())) {
+            return BaseResponse.fail(e.getMsg());
+        }
+        return BaseResponse.fail(e.getCode(), e.getMsg(),e.getSuccess());
     }
 }

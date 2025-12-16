@@ -2,6 +2,7 @@ package com.personal.hjycommunitymodule.common.exception;
 
 import com.alibaba.fastjson.JSON;
 import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
+import com.personal.hjycommunitymodule.common.core.exception.CustomException;
 import com.personal.hjycommunitymodule.common.utils.WebUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -25,7 +26,7 @@ import java.io.IOException;
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        BaseResponse<Object> baseResponse = BaseResponse.fail(HttpStatus.UNAUTHORIZED.value(), "认证失败请重新登录");
+        BaseResponse<Object> baseResponse = BaseResponse.fail(HttpStatus.UNAUTHORIZED.value(), "认证失败请重新登录",false);
 
         WebUtils.renderString(response, JSON.toJSONString(baseResponse));// 渲染到前端
     }

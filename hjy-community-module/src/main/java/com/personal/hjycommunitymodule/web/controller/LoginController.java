@@ -3,6 +3,7 @@ package com.personal.hjycommunitymodule.web.controller;
 import com.personal.hjycommunitymodule.common.core.controller.BaseController;
 import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.community.domain.SysUser;
+import com.personal.hjycommunitymodule.community.domain.vo.LoginBody;
 import com.personal.hjycommunitymodule.community.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,7 @@ public class LoginController extends BaseController {
     LoginService loginService;
 
     @PostMapping("/user/login")
-    public BaseResponse login(@RequestBody SysUser user) {
+    public BaseResponse login(@RequestBody LoginBody user) {
         System.out.println("---------");
         return loginService.login(user);
     }

@@ -2,6 +2,7 @@ package com.personal.hjycommunitymodule.community.service;
 
 import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.community.domain.SysUser;
+import com.personal.hjycommunitymodule.community.domain.vo.LoginBody;
 
 /**
  * @ClassName LoginService
@@ -11,7 +12,7 @@ import com.personal.hjycommunitymodule.community.domain.SysUser;
  */
 public interface LoginService {
 
-    BaseResponse login(SysUser user);
+    BaseResponse login(LoginBody user);
 
     BaseResponse logout();
 }

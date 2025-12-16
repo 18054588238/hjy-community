@@ -1,10 +1,12 @@
 package com.personal.hjycommunitymodule.community.service.impl;
 
+import com.personal.hjycommunitymodule.common.constant.Constants;
 import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.common.utils.JWTUtils;
 import com.personal.hjycommunitymodule.common.utils.RedisCache;
 import com.personal.hjycommunitymodule.community.domain.LoginUser;
 import com.personal.hjycommunitymodule.community.domain.SysUser;
+import com.personal.hjycommunitymodule.community.domain.vo.LoginBody;
 import com.personal.hjycommunitymodule.community.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,12 +30,17 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
-    RedisCache redisCache;
+    private RedisCache redisCache;
 
     // 2
     @Override
-    public BaseResponse login(SysUser user) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword());
+    public BaseResponse login(LoginBody user) {
+
+        // 校验验证码
+        String code = redisCache.getCacheObject(Constants.CAPTCHA_CODE_KEY + user.getUuid());
+
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
         // 调用(AuthenticationManager 实现类ProviderManager 委托给)DaoAuthenticationProvider的authenticate方法进行认证
         Authentication authenticate = authenticationManager.authenticate(authentication);
         if (authenticate == null) {

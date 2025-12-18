@@ -1,5 +1,7 @@
 package com.personal.hjycommunitymodule.common.utils;
 
+import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -16,7 +18,7 @@ public class WebUtils {
      * @param string 待渲染的字符串
      * @return
      */
-    public static String renderString(HttpServletResponse response,String string) {
+    public static String renderString(HttpServletResponse response, String string) {
         try {
             response.setStatus(200);
             response.setContentType("application/json");

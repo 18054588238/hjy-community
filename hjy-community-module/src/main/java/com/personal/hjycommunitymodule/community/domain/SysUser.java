@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.personal.hjycommunitymodule.common.core.domain.BaseEntity;
+import com.personal.hjycommunitymodule.system.domain.SysDept;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minidev.json.annotate.JsonIgnore;
@@ -13,6 +14,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户信息表
@@ -103,5 +105,22 @@ public class SysUser extends BaseEntity {
      */
     private Date loginDate;
 
+    @TableField(exist = false)
+    private SysDept dept;
+
+    @TableField(exist = false)
+    private List<SysRole> roles;
+    @TableField(exist = false)
+    private List<Long> roleIds;
+    @TableField(exist = false)
+    private List<Long> postIds;
+
+    //判断是否是admin
+    public boolean isAdmin() {
+        return isAdmin(this.userId);
+    }
+    public static boolean isAdmin(Long userId) {
+        return userId != null && 1L == userId;
+    }
 
 }

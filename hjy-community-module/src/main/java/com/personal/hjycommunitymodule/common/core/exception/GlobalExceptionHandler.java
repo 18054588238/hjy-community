@@ -22,7 +22,8 @@ public class GlobalExceptionHandler {
         return BaseResponse.fail(e.getDefaultMessage());
     }
 
-    @ExceptionHandler(CustomException.class)
+    @ExceptionHandler(CustomException.class) // ← 这个注解只处理Controller抛出的异常，过滤器抛出的异常并不会到这里
+    @ResponseBody
     public BaseResponse handleCustomException(CustomException e) {
         if (Objects.isNull(e.getCode())) {
             return BaseResponse.fail(e.getMsg());

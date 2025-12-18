@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.personal.hjycommunitymodule.common.core.domain.BaseEntity;
+import com.personal.hjycommunitymodule.system.domain.SysDept;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 角色信息表
@@ -64,6 +66,22 @@ public class SysRole extends BaseEntity implements Serializable {
      * 删除标志（0代表存在 2代表删除）
      */
     private String delFlag;
+
+    /** 用户是否存在此角色标识 默认不存在 */
+    @TableField(exist = false)
+    private boolean flag = false;
+
+    @TableField(exist = false)
+    private List<Long> menuIds;
+    @TableField(exist = false)
+    private List<Long> deptIds;
+    //判断是否是admin
+    public boolean isAdmin() {
+        return isAdmin(this.roleId);
+    }
+    public static boolean isAdmin(Long roleId) {
+        return roleId != null && 1L == roleId;
+    }
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

@@ -15,6 +15,7 @@ public static final String UTF8 = "UTF-8";
      * GBK 字符集
      */
     public static final String GBK = "GBK";
+    public static final String header = "Authorization";
 
     /**
      * http请求

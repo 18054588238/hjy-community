@@ -1,11 +1,15 @@
 package com.personal.hjycommunitymodule.common.filter;
 
+import com.alibaba.fastjson.JSON;
 import com.personal.hjycommunitymodule.common.constant.Constants;
+import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.common.core.exception.CustomException;
 import com.personal.hjycommunitymodule.common.utils.JWTUtils;
 import com.personal.hjycommunitymodule.common.utils.RedisCache;
+import com.personal.hjycommunitymodule.common.utils.WebUtils;
 import com.personal.hjycommunitymodule.community.domain.LoginUser;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.parallel.Execution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,8 +65,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         // 如果字符串不为空、长度大于 0 且不包含空白字符，则返回 true
         if (!StringUtils.hasText(jwt)) {
             // token为空，返回401未授权
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Missing authentication token");
+            BaseResponse<Object> baseResponse = BaseResponse.fail(401, "未获取到token");
+            WebUtils.renderString(response, JSON.toJSONString(baseResponse));
             // return的作用是返回响应的时候，避免走下面的逻辑
             return;
         }
@@ -77,17 +81,24 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         // 从redis中获取用户信息
         String redisKey = Constants.LOGIN_USER_KEY+userId;
-        LoginUser user = redisCache.getCacheObject(redisKey);
-        if (Objects.isNull(user)) {
-            throw new CustomException(401,"用户未登录");
+        Object object = redisCache.getCacheObject(redisKey);
+
+        if (Objects.isNull(object)) {
+            // 过滤器中抛出的异常直接返回给Servlet容器，不会进入Spring MVC
+//            throw new CustomException(401,"用户未登录"); // 无法被@RestControllerAdvice捕获
+            // 可以不处理，直接由Spring Security的异常处理机制抛出异常,也可以通过下面方式处理
+//            BaseResponse<Object> baseResponse = BaseResponse.fail(401, "用户未登录");
+//            WebUtils.renderString(response,JSON.toJSONString(baseResponse));
+        } else {
+            LoginUser user = (LoginUser) object;
+            // 将 用户信息和权限信息 保存到SecurityContextHolder中 - 供后面的过滤器使用
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user,
+                    null,
+                    user.getAuthorities());
+            // 设置与当前身份验证相关的详细信息（远程IP地址、会话id等）
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); // 当前请求的信息
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
-        // 将 用户信息和权限信息 保存到SecurityContextHolder中 - 供后面的过滤器使用
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user,
-                null,
-                user.getAuthorities());
-        // 设置与当前身份验证相关的详细信息（远程IP地址、会话id等）
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); // 当前请求的信息
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         // 放行
         filterChain.doFilter(request,response);
     }

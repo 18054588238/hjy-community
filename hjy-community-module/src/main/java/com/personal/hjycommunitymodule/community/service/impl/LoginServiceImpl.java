@@ -3,6 +3,7 @@ package com.personal.hjycommunitymodule.community.service.impl;
 import com.personal.hjycommunitymodule.common.constant.Constants;
 import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.common.core.exception.CustomException;
+import com.personal.hjycommunitymodule.common.utils.ChainedMap;
 import com.personal.hjycommunitymodule.common.utils.JWTUtils;
 import com.personal.hjycommunitymodule.common.utils.RedisCache;
 import com.personal.hjycommunitymodule.community.domain.LoginUser;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @ClassName LoginServiceImpl
@@ -54,11 +56,11 @@ public class LoginServiceImpl implements LoginService {
         }
         // 认证成功，使用userId生成token
         LoginUser principal = (LoginUser) authenticate.getPrincipal();
-        Long userId = principal.getSysUser().getUserId();
-        String jwt = JWTUtils.createJWT(String.valueOf(userId)); // 生成token
+//        Long userId = principal.getSysUser().getUserId();
+        String jwt = JWTUtils.createJWT(principal,redisCache); // 生成token
 
-        // 将用户信息存储到redis缓存中
-        redisCache.setCacheObject(Constants.LOGIN_USER_KEY+userId,principal);
+        // 将用户信息存储到redis缓存中 - 创建令牌时实现
+//        redisCache.setCacheObject(Constants.LOGIN_USER_KEY+userId,principal,30, TimeUnit.MINUTES);
 
         HashMap<String, String> map = new HashMap<>();
         map.put("token",jwt);
@@ -79,5 +81,14 @@ public class LoginServiceImpl implements LoginService {
             return BaseResponse.success("已退出登录");
         }
         return BaseResponse.success("退出失败");
+    }
+
+    @Override
+    public ChainedMap getInfo() {
+        // 获取当前登录用户信息
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        SysUser sysUser = loginUser.getSysUser();
+        return null;
     }
 }

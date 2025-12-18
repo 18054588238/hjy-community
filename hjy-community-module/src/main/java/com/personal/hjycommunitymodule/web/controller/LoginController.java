@@ -2,6 +2,7 @@ package com.personal.hjycommunitymodule.web.controller;
 
 import com.personal.hjycommunitymodule.common.core.controller.BaseController;
 import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
+import com.personal.hjycommunitymodule.common.utils.ChainedMap;
 import com.personal.hjycommunitymodule.community.domain.SysUser;
 import com.personal.hjycommunitymodule.community.domain.vo.LoginBody;
 import com.personal.hjycommunitymodule.community.service.LoginService;
@@ -27,6 +28,15 @@ public class LoginController extends BaseController {
         System.out.println("---------");
         return loginService.login(user);
     }
+
+    // 获取用户信息，以及对应的权限信息、角色信息
+    @GetMapping("/getInfo")
+    public ChainedMap getInfo() {
+        return loginService.getInfo();
+    }
+
+
+
 
     @PostMapping("/user/logout")
     public BaseResponse logout() {
@@ -81,8 +91,6 @@ public class LoginController extends BaseController {
     public String roleAndPerm2() {
         return "roleAndPerm2";
     }
-
-
 
     @PostMapping("/testCors")
     public BaseResponse testCors() {

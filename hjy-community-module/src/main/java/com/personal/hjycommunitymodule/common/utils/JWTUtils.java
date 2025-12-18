@@ -1,12 +1,13 @@
 package com.personal.hjycommunitymodule.common.utils;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.personal.hjycommunitymodule.common.constant.Constants;
+import io.jsonwebtoken.*;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
@@ -19,10 +20,18 @@ import java.util.UUID;
  */
 public class JWTUtils {
 
+
+
+    @Value("${token.secret}")
+    private static String secret; // 秘钥明文
+
+    @Value("${token.expireTime}")
+    private int expireTime; // 默认token过期时间
+
     // 默认token过期时间
     public static final Long JWT_TTL = 60 * 60 *1000L; // 1h
     //秘钥明文
-    public static final String JWT_KEY = "msbhjy";
+//    public static final String JWT_KEY = "msbhjy";
 
     /**
      * 生成JWT
@@ -30,7 +39,7 @@ public class JWTUtils {
      * @return
      */
     public static String createJWT(String subject) {
-        JwtBuilder jwtBuilder = builderJWT(subject,null,getUUID());
+        JwtBuilder jwtBuilder = builderJWT(subject,null,UUIDUtils.simpleUUID());
         return jwtBuilder.compact();
     }
 
@@ -41,7 +50,7 @@ public class JWTUtils {
      * @return
      */
     public static String createJWT(String subject,Long ttlMillis) {
-        JwtBuilder jwtBuilder = builderJWT(subject,ttlMillis,getUUID());
+        JwtBuilder jwtBuilder = builderJWT(subject,ttlMillis,UUIDUtils.simpleUUID());
         return jwtBuilder.compact();
     }
 
@@ -81,19 +90,20 @@ public class JWTUtils {
                 .parseClaimsJws(jwt)
                 .getBody();
     }
+    /** 刷新令牌 */
+    public void refreshToken() {
+
+    }
+
 
     /**
      * 生成加密后的秘钥
      * @return
      */
     private static SecretKey generateSecretKey() {
-        byte[] decode = Base64.getDecoder().decode(JWT_KEY);
+        byte[] decode = Base64.getDecoder().decode(secret);
 //        System.out.println("------------------"+decode);
         return new SecretKeySpec(decode, 0, decode.length, "AES");
-    }
-
-    private static String getUUID() {
-        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
     /*public static void main(String[] args) {

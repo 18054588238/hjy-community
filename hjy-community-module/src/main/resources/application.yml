@@ -66,4 +66,8 @@ mybatis-plus:
       # id???????id
       id-type: assign_id
     banner: false # ??mybatis-plus ?banner
-
+# token配置
+token:
+  header: Authorization # 自定义标识
+  secret: msbhjy # token明文秘钥
+  expireTime: 30 # 30min

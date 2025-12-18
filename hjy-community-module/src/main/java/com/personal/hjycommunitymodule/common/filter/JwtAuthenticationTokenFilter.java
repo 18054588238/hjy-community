@@ -1,5 +1,6 @@
 package com.personal.hjycommunitymodule.common.filter;
 
+import com.personal.hjycommunitymodule.common.constant.Constants;
 import com.personal.hjycommunitymodule.common.core.exception.CustomException;
 import com.personal.hjycommunitymodule.common.utils.JWTUtils;
 import com.personal.hjycommunitymodule.common.utils.RedisCache;
@@ -7,8 +8,10 @@ import com.personal.hjycommunitymodule.community.domain.LoginUser;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.parallel.Execution;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -36,6 +39,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private RedisCache redisCache;
 
+    @Value("${token.header}")
+    private String header;
+
     private final List<String> excludeUrls = Arrays.asList(
             "/user/login","/captchaImage"
     );
@@ -51,11 +57,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
         // 从请求头中获取token - 请求头名称是前后端约定好的
         // 使用"token"这个请求头来传递JWT令牌。前端在发送请求时，需要在请求头中设置名为"token"的字段，其值为JWT令牌。
-        String jwt = request.getHeader("token");
+        String jwt = getToken(request);
         // 如果字符串不为空、长度大于 0 且不包含空白字符，则返回 true
         if (!StringUtils.hasText(jwt)) {
-            // 放行
-//            filterChain.doFilter(request,response);
             // token为空，返回401未授权
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Missing authentication token");
@@ -72,18 +76,29 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
 
         // 从redis中获取用户信息
-        String redisKey = "login:"+userId;
+        String redisKey = Constants.LOGIN_USER_KEY+userId;
         LoginUser user = redisCache.getCacheObject(redisKey);
         if (Objects.isNull(user)) {
             throw new CustomException(401,"用户未登录");
         }
-        // 将 用户信息和权限信息 保存到SecurityContextHolder中
+        // 将 用户信息和权限信息 保存到SecurityContextHolder中 - 供后面的过滤器使用
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user,
                 null,
                 user.getAuthorities());
+        // 设置与当前身份验证相关的详细信息（远程IP地址、会话id等）
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); // 当前请求的信息
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         // 放行
         filterChain.doFilter(request,response);
+    }
+
+    /** 获取请求携带的token */
+    private String getToken(HttpServletRequest request) {
+        String token = request.getHeader(header);
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(token) && token.startsWith(Constants.TOKEN_PREFIX)) {
+            token = token.replace(Constants.TOKEN_PREFIX,""); // 去掉前缀
+        }
+        return token;
     }
 
     private boolean isExcludeUrl(String url) {

@@ -43,7 +43,6 @@ public class LoginServiceImpl implements LoginService {
         redisCache.deleteObject(key);
 
         if (Objects.isNull(code) || !code.equalsIgnoreCase(user.getCode())) {
-//            throw new CaptchaException("验证码错误");
             throw new CustomException(400,"验证码错误");
         }
 
@@ -56,10 +55,10 @@ public class LoginServiceImpl implements LoginService {
         // 认证成功，使用userId生成token
         LoginUser principal = (LoginUser) authenticate.getPrincipal();
         Long userId = principal.getSysUser().getUserId();
-        String jwt = JWTUtils.createJWT(String.valueOf(userId));
+        String jwt = JWTUtils.createJWT(String.valueOf(userId)); // 生成token
 
         // 将用户信息存储到redis缓存中
-        redisCache.setCacheObject("login:"+userId,principal);
+        redisCache.setCacheObject(Constants.LOGIN_USER_KEY+userId,principal);
 
         HashMap<String, String> map = new HashMap<>();
         map.put("token",jwt);

@@ -46,9 +46,15 @@ public class LoginUser implements UserDetails {
     }
 
     public LoginUser(SysUser sysUser, List<String> perms, List<String> roles) {
+
         this.sysUser = sysUser;
         this.permissions = perms;
         this.roles = roles;
+        // 如果是admin用户，则拥有所有权限和角色
+        if (sysUser.getUserId() == 1L) {
+            this.permissions.add("*:*:*");
+            this.roles.add("admin");
+        }
     }
 
     // 1

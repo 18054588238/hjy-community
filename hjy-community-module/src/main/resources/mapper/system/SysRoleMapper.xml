@@ -22,14 +22,16 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        role_id,role_name,role_key,role_sort,data_scope,menu_check_strictly,
-        dept_check_strictly,status,del_flag,create_by,create_time,
-        update_by,update_time,remark
+        a.role_id,a.role_name,a.role_key,a.role_sort,a.data_scope,a.menu_check_strictly,
+        a.dept_check_strictly,a.status,a.del_flag,a.create_by,a.create_time,
+        a.update_by,a.update_time,a.remark
     </sql>
-    <select id="selectRolesByUserId" resultType="java.lang.String">
-        select distinct role_name from sys_role a
-                                           inner join sys_user_role b on a.role_id = b.role_id
-                                           inner join sys_user c on b.user_id = c.user_id
+    <select id="selectRolesByUserId" resultType="SysRole">
+        select
+            <include refid="Base_Column_List"/>
+        from sys_role a
+           inner join sys_user_role b on a.role_id = b.role_id
+           inner join sys_user c on b.user_id = c.user_id
         where c.user_id = #{userId} and a.status = 0 and c.status = 0;
     </select>
 </mapper>

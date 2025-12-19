@@ -33,10 +33,10 @@ spring:
       testOnReturn: false
       #采集web-jdbc关联监控的数据。
       webStatFilter:
-        enabled: true
+        enabled: false #todo 暂时关闭
       # Druid内置提供了一个StatViewServlet用于展示Druid的统计信息。
       statViewServlet:
-        enabled: true
+        enabled: false #todo 暂时关闭
         # 设置白名单，不填则允许所有访问
         allow:
         url-pattern: /druid/*
@@ -47,7 +47,7 @@ spring:
       #配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入
       filter:
         stat:
-          enabled: true
+          enabled: false # 暂时关闭统计过滤器
           # 慢SQL记录
           log-slow-sql: true
           slow-sql-millis: 1000

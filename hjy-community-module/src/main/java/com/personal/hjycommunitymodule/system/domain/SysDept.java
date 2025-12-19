@@ -1,6 +1,7 @@
 package com.personal.hjycommunitymodule.system.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.personal.hjycommunitymodule.common.core.domain.BaseEntity;
 import lombok.Data;
@@ -20,6 +21,7 @@ import java.util.List;
 @Data
 public class SysDept extends BaseEntity {
 //部门id
+    @TableId
     private Long deptId;
 //父部门id
     private Long parentId;

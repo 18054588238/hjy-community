@@ -4,10 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.personal.hjycommunitymodule.common.core.domain.UserStatus;
 import com.personal.hjycommunitymodule.common.core.exception.BaseException;
 import com.personal.hjycommunitymodule.community.domain.LoginUser;
+import com.personal.hjycommunitymodule.community.domain.SysMenu;
+import com.personal.hjycommunitymodule.community.domain.SysRole;
 import com.personal.hjycommunitymodule.community.domain.SysUser;
 import com.personal.hjycommunitymodule.community.mapper.SysMenuMapper;
 import com.personal.hjycommunitymodule.community.mapper.SysRoleMapper;
 import com.personal.hjycommunitymodule.community.mapper.SysUserMapper;
+import com.personal.hjycommunitymodule.system.domain.SysDept;
+import com.personal.hjycommunitymodule.system.mapper.SysDeptMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName UserDetailsService
@@ -32,6 +37,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private SysMenuMapper menuMapper;
     @Autowired
     private SysRoleMapper roleMapper;
+    @Autowired
+    private SysDeptMapper deptMapper;
 
     // 1
     @Override
@@ -52,9 +59,32 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             log.info("用户：{}已被删除",username);
             throw new BaseException("用户："+username+"已被删除");
         }
-        // todo 数据库查询 存储授权信息
-        List<String> perms = menuMapper.selectPermsByUserId(sysUser.getUserId());
-        List<String> roles = roleMapper.selectRolesByUserId(sysUser.getUserId());
-        return new LoginUser(sysUser,perms,roles);
+        // 数据库查询 存储授权信息
+        List<SysMenu> perms = menuMapper.selectPermsByUserId(sysUser.getUserId());
+
+        List<String> permsNameList = perms.stream()
+                .map(SysMenu::getMenuName)
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<SysRole> roles = roleMapper.selectRolesByUserId(sysUser.getUserId());
+
+        List<String> roleNameList = roles.stream()
+                .map(SysRole::getRoleName)
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<Long> roleIds = roles.stream()
+                .map(SysRole::getRoleId)
+                .distinct()
+                .collect(Collectors.toList());
+        // 获取用户部门
+        SysDept sysDept = deptMapper.selectById(sysUser.getDeptId());
+        sysUser.setDept(sysDept);
+        // 获取用户角色列表
+        sysUser.setRoles(roles);
+        // 获取用户角色id列表
+        sysUser.setRoleIds(roleIds);
+        return new LoginUser(sysUser,permsNameList,roleNameList);
     }
 }

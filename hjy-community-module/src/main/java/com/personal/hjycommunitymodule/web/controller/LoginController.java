@@ -5,11 +5,14 @@ import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.common.utils.ChainedMap;
 import com.personal.hjycommunitymodule.community.domain.SysUser;
 import com.personal.hjycommunitymodule.community.domain.vo.LoginBody;
+import com.personal.hjycommunitymodule.community.domain.vo.MenuVo;
 import com.personal.hjycommunitymodule.community.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @ClassName LoginController
@@ -33,6 +36,12 @@ public class LoginController extends BaseController {
     @GetMapping("/getInfo")
     public ChainedMap getInfo() {
         return loginService.getInfo();
+    }
+
+    @GetMapping("/getRouters")
+    public BaseResponse getRouters(){
+        List<MenuVo> data = loginService.getRouters();
+        return BaseResponse.success(data);
     }
 
 

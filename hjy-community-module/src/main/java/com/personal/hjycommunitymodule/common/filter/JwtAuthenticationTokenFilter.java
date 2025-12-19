@@ -76,7 +76,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             Claims claims = JWTUtils.parserJWT(jwt);
             userId = claims.getSubject();
         } catch (Exception e) {
-            throw new CustomException(401,"非法token");
+            BaseResponse<Object> baseResponse = BaseResponse.fail(401, "非法token");
+            WebUtils.renderString(response, JSON.toJSONString(baseResponse));
+//            throw new CustomException(401,"非法token");
+            return;
         }
 
         // 从redis中获取用户信息

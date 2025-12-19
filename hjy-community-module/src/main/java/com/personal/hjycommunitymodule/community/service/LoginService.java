@@ -4,6 +4,9 @@ import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.common.utils.ChainedMap;
 import com.personal.hjycommunitymodule.community.domain.SysUser;
 import com.personal.hjycommunitymodule.community.domain.vo.LoginBody;
+import com.personal.hjycommunitymodule.community.domain.vo.MenuVo;
+
+import java.util.List;
 
 /**
  * @ClassName LoginService
@@ -18,4 +21,6 @@ public interface LoginService {
     BaseResponse logout();
 
     ChainedMap getInfo();
+
+    List<MenuVo> getRouters();
 }

@@ -26,16 +26,18 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        menu_id,menu_name,parent_id,order_num,path,component,
-        is_frame,is_cache,menu_type,visible,status,
-        perms,icon,create_by,create_time,update_by,
-        update_time,remark
+        a.menu_id,a.menu_name,a.parent_id,a.order_num,a.path,a.component,
+        a.is_frame,a.is_cache,a.menu_type,a.visible,a.status,
+        a.perms,a.icon,a.create_by,a.create_time,a.update_by,
+        a.update_time,a.remark
     </sql>
-    <select id="selectPermsByUserId" resultType="java.lang.String">
-        select distinct menu_name from sys_menu a
-                                           inner join sys_role_menu b on a.menu_id = b.menu_id
-                                           inner join sys_user_role c on b.role_id = c.role_id
-                                           inner join sys_user d on c.user_id = d.user_id
+    <select id="selectPermsByUserId" resultType="SysMenu">
+        select
+            <include refid="Base_Column_List"></include>
+        from sys_menu a
+           inner join sys_role_menu b on a.menu_id = b.menu_id
+           inner join sys_user_role c on b.role_id = c.role_id
+           inner join sys_user d on c.user_id = d.user_id
         where d.user_id = #{userId} and a.status = 0 and d.status = 0;
     </select>
 

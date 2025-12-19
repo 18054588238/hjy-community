@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -88,7 +89,13 @@ public class LoginServiceImpl implements LoginService {
         // 获取当前登录用户信息
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+
         SysUser sysUser = loginUser.getSysUser();
+        // 获取权限信息
+        List<String> permissions = loginUser.getPermissions();
+        // 获取角色信息
+        List<String> roles = loginUser.getRoles();
+
         return null;
     }
 }

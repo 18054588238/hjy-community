@@ -64,10 +64,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)// 不会创建会话，每个请求都将被视为独立的请求
                 .and()
                 .authorizeRequests() // 定义请求授权规则
-                .antMatchers("/user/login","/captchaImage").permitAll()//登录接口，允许匿名访问
+                .antMatchers("/login","/captchaImage").permitAll()//登录接口，允许匿名访问
+                .mvcMatchers("/exportExcel/exportCommunityExcel").anonymous()
                 .antMatchers("/config").hasAuthority("小区信息") // 配置形式的权限控制
                 .anyRequest().authenticated()
         ;
+        // 退出登录
+        http.logout().logoutSuccessHandler(logoutSuccessHandler);
 //        http.authorizeHttpRequests()
 //                .mvcMatchers("/hejiayun/login.html","/hejiayun/test/login").permitAll()
 //                .anyRequest().authenticated()

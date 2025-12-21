@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class SysDept extends BaseEntity {
     private String parentName;
     // 添加一个子部门属性
     @TableField(exist = false)
-    private List<SysDept> children;
+    private List<SysDept> children = new ArrayList<>();
 //祖级列表
     private String ancestors;
 //部门名称

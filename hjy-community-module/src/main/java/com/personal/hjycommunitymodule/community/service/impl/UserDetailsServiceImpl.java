@@ -69,8 +69,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         List<SysRole> roles = roleMapper.selectRolesByUserId(sysUser.getUserId());
 
-        List<String> roleNameList = roles.stream()
-                .map(SysRole::getRoleName)
+        List<String> roleKeyList = roles.stream()
+                .map(SysRole::getRoleKey)
                 .distinct()
                 .collect(Collectors.toList());
 
@@ -85,6 +85,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         sysUser.setRoles(roles);
         // 获取用户角色id列表
         sysUser.setRoleIds(roleIds);
-        return new LoginUser(sysUser,permsNameList,roleNameList);
+        return new LoginUser(sysUser,permsNameList,roleKeyList);
     }
 }

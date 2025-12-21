@@ -33,17 +33,19 @@ public class CorsConfig implements WebMvcConfigurer {
                 // 此方法替代了 `allowedOrigins(String...)`，它支持更灵活的模式，用于指定允许浏览器发起跨域请求的来源。
                 // 有关格式详情和其他注意事项，请参阅 `CorsConfiguration.setAllowedOriginPatterns(List)`。
                 //默认情况下，此设置未启用。
-                .allowedOriginPatterns("*")// 指定发起跨域请求的来源，被指定的路径允许跨域请求访问
+                .allowedOriginPatterns("*")
+//                .allowedOriginPatterns("http://localhost:*","http://127.0.0.1:*")// 指定发起跨域请求的来源，被指定的路径允许跨域请求访问
                 // 浏览器是否应将凭据（例如 Cookie）与跨域请求一起发送到指定端点。配置值设置在预检请求的 Access-Control-Allow-Credentials 响应头中。
                 //注意：此选项会与已配置的域建立高度信任关系，但同时也会增加 Web 应用程序的攻击面，因为它会暴露敏感的用户特定信息，例如 Cookie 和 CSRF 令牌。
                 //默认情况下，此选项未设置，因此 Access-Control-Allow-Credentials 标头也未设置，凭据将无法使用。
                 .allowCredentials(true)
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods(CorsConfiguration.ALL)
                 // 设置预检请求中允许在实际请求中使用的标头列表。
                 //可以使用特殊值“*”来允许所有标头。
                 //如果标头名称属于 CORS 规范中的以下类型之一，则无需列出：Cache-Control、Content-Language、Expires、Last-Modified 或 Pragma。
                 //默认情况下，所有标头均被允许。
-                .allowedHeaders("*")
+                .allowedHeaders(CorsConfiguration.ALL)
+//                .exposedHeaders("Authorization")
                 // 配置客户端可以缓存预检请求响应的时长（以秒为单位）。
                 //默认值为 1800 秒（30 分钟）。
                 .maxAge(3600); // 1h

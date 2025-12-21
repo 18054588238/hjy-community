@@ -1,7 +1,7 @@
 package com.personal.hjycommunitymodule.community.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.personal.hjycommunitymodule.common.constant.UserConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,8 +49,8 @@ public class LoginUser implements UserDetails {
         this.roles = roles;
         // 如果是admin用户，则拥有所有权限和角色
         if (sysUser.getUserId() == 1L) {
-            this.permissions.add("*:*:*");
-            this.roles.add("admin");
+            this.permissions.add(UserConstants.ALL_PERMISSION);
+//            this.roles.add(UserConstants.ALL_ROLE);
         }
     }
 

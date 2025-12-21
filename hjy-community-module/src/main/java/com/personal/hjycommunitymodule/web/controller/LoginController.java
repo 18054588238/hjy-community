@@ -26,7 +26,7 @@ public class LoginController extends BaseController {
     @Autowired
     LoginService loginService;
 
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     public BaseResponse login(@RequestBody LoginBody user) {
         System.out.println("---------");
         return loginService.login(user);
@@ -41,13 +41,13 @@ public class LoginController extends BaseController {
     @GetMapping("/getRouters")
     public BaseResponse getRouters(){
         List<MenuVo> data = loginService.getRouters();
-        return BaseResponse.success(data);
+        return BaseResponse.success(data,true);
     }
 
 
 
 
-    @PostMapping("/user/logout")
+//    @PostMapping("/logout")
     public BaseResponse logout() {
         return loginService.logout();
     }
@@ -76,7 +76,7 @@ public class LoginController extends BaseController {
 
     @GetMapping("/myPerm")
     // 使用自定义权限校验
-    @PreAuthorize("@my_ex.hasAuthority('小区信息')")
+    @PreAuthorize("@my_ex.hasAuthority('小区信息1')")
     public String myPerm() {
         return "myPerm";
     }

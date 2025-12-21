@@ -47,7 +47,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String header;
 
     private final List<String> excludeUrls = Arrays.asList(
-            "/user/login","/captchaImage"
+            "/login","/captchaImage","/exportExcel/exportCommunityExcel"
     );
 
     // 封装过滤器的执行逻辑

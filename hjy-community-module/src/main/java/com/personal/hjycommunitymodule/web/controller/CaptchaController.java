@@ -34,10 +34,11 @@ public class CaptchaController {
     public ChainedMap loadCode(HttpServletResponse response) {
         // 将生成的验证码和唯一id保存到redis中，并响应给前端
         SpecCaptcha captcha = new SpecCaptcha(130, 48, 4);
-        String key = Constants.CAPTCHA_CODE_KEY + UUIDUtils.simpleUUID();
+        String uuid = UUIDUtils.simpleUUID();
+        String key = Constants.CAPTCHA_CODE_KEY + uuid;
         String verCode = captcha.text().toLowerCase();
         redisCache.setCacheObject(key,verCode, 5, TimeUnit.MINUTES);
 
-        return ChainedMap.create().set("uuid",key).set("img",captcha.toBase64());
+        return ChainedMap.create().set("uuid",uuid).set("img",captcha.toBase64());
     }
 }

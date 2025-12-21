@@ -1,5 +1,6 @@
 package com.personal.hjycommunitymodule.common.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ public class BaseResponse<T> implements Serializable {
     private Integer code;
     private String msg;
     private T data;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean success;
 
     /*
@@ -29,6 +31,18 @@ public class BaseResponse<T> implements Serializable {
         response.setCode(ResultCode.SUCCESS.getCode());
         response.setMsg(ResultCode.SUCCESS.getMessage());
         response.setData(data);
+//        response.setSuccess(true);
+
+        return response;
+    }
+
+    public static <T> BaseResponse<T> success(T data,Boolean success) {
+        BaseResponse<T> response = new BaseResponse<>();
+
+        response.setCode(ResultCode.SUCCESS.getCode());
+        response.setMsg(ResultCode.SUCCESS.getMessage());
+        response.setData(data);
+        response.setSuccess(success);
 
         return response;
     }

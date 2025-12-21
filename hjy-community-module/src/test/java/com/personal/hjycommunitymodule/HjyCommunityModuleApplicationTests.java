@@ -1,5 +1,7 @@
 package com.personal.hjycommunitymodule;
 
+import com.personal.hjycommunitymodule.community.domain.vo.MenuVo;
+import com.personal.hjycommunitymodule.community.service.LoginService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -10,13 +12,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
+import java.util.List;
 
 @SpringBootTest
 class HjyCommunityModuleApplicationTests {
 
+    @Autowired
+    LoginService loginService;
+
     @Test
     void contextLoads() {
-
+        List<MenuVo> routers = loginService.getRouters();
+        System.out.println(routers);
     }
 
     @Test

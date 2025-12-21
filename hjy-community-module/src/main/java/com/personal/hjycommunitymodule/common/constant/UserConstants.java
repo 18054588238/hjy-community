@@ -8,6 +8,10 @@ package com.personal.hjycommunitymodule.common.constant;
  */
 public class UserConstants {
 
+    // 所有权限标志
+    public static final String ALL_PERMISSION = "*:*:*";
+    public static final String ALL_ROLE = "admin";
+
     /**
      * 平台内系统用户的唯一标志
      */

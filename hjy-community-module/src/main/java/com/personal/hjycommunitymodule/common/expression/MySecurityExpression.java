@@ -1,5 +1,6 @@
 package com.personal.hjycommunitymodule.common.expression;
 
+import com.personal.hjycommunitymodule.common.constant.UserConstants;
 import com.personal.hjycommunitymodule.community.domain.LoginUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +24,9 @@ public class MySecurityExpression {
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         List<String> permissions = loginUser.getPermissions();
         // 判断传入的权限是否在列表中
+        /*if (permissions.contains(authority) || permissions.contains(UserConstants.ALL_PERMISSION)) {
+            return true;
+        }*/
         return permissions.contains(authority);
     }
 }

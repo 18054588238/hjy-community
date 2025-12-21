@@ -23,7 +23,7 @@ public class BaseController {
     private static final String PAGE_SIZE = "pageSize";
     // 封装分页请求对象
     public static PageDomain getPageDomain() {
-        // 获取分页参数
+        // 获取分页参数 - 从前端发过来的请求中获取
         Integer pageNum = ServletUtils.getParameterToInt(PAGE_NUM);
         Integer pageSize = ServletUtils.getParameterToInt(PAGE_SIZE);
         return new PageDomain(pageNum, pageSize);
@@ -34,6 +34,9 @@ public class BaseController {
         Integer pageNum = pageDomain.getPageNum();
         Integer pageSize = pageDomain.getPageSize();
         if ( pageNum != null && pageSize != null ) {
+            /*作用：1. 该方法会在当前线程的 ThreadLocal 中设置分页参数（页码和每页数量）。
+            2. 当执行后续的 MyBatis 查询方法时，PageHelper 会拦截查询语句，并根据这些分页参数自动生成 分页 SQL（添加 LIMIT 或 ROWNUM 等方言对应的分页语句）。
+            3. 同时，它还会自动执行一个 count 查询，用于计算总记录数，从而可以获取总页数等信息。*/
             PageHelper.startPage(pageNum,pageSize);// 会自动执行分页操作
         }
     }

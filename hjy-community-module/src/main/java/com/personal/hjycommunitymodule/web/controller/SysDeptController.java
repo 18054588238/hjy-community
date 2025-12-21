@@ -32,4 +32,5 @@ public class SysDeptController extends BaseController {
         List<SysDept> list = sysDeptService.getDeptList(sysDept);
         return BaseResponse.success(list);
     }
+
 }

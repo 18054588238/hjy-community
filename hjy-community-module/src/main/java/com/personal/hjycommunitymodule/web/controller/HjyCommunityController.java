@@ -38,7 +38,8 @@ public class HjyCommunityController extends BaseController {
     }
 
     // 新增小区信息
-    @PostMapping("/add")
+//    @PostMapping("")  和下面等价
+    @PostMapping
     public BaseResponse add(@RequestBody HjyCommunity hjyCommunity){
         return getBaseResponse(hjyCommunityService.addHjyCommunity(hjyCommunity));
     }
@@ -50,13 +51,14 @@ public class HjyCommunityController extends BaseController {
     }
 
     // 修改小区信息
-    @PutMapping("/update")
+//    @PutMapping("")
+    @PutMapping
     public BaseResponse updateCommunity(@RequestBody HjyCommunity hjyCommunity){
         return getBaseResponse(hjyCommunityService.updateCommunity(hjyCommunity));
     }
 
     // 删除小区信息
-    @DeleteMapping("/delete/{communityIds}")
+    @DeleteMapping("/{communityIds}")
     public BaseResponse delete(@PathVariable List<Long> communityIds){
         return getBaseResponse(hjyCommunityService.deleteCommunity(communityIds));
     }

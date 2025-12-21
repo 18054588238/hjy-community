@@ -30,7 +30,7 @@ hjy-community:
 server:
   port: 8888
   servlet:
-    context-path: /hejiayun # ???????
+    context-path: / # ???????
   tomcat:
     uri-encoding: UTF-8
     threads:

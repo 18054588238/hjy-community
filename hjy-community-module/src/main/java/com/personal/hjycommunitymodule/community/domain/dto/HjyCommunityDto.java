@@ -20,4 +20,5 @@ public class HjyCommunityDto extends HjyCommunity {
 
     private String communityTownName;
 
+
 }

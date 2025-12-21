@@ -25,9 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -131,22 +129,50 @@ public class LoginServiceImpl implements LoginService {
             wrapper.in(SysMenu::getMenuId, menuIds);
         }
 
-        List<SysMenu> sysMenus = menuMapper.selectList(wrapper);
+        Map<Long, List<SysMenu>> sysMenuMap = menuMapper.selectList(wrapper).stream()
+                .collect(Collectors.groupingBy(SysMenu::getParentId));
+        // 一级菜单 - 查询当前菜单的所有子菜单 - 封装为树形结构
+        List<SysMenu> menus = sysMenuMap.get(0L);
 
-        List<MenuVo> menuVos = sysMenus.stream().map(i -> {
+        List<SysMenu> treeMenus = loadChildren(menus, sysMenuMap);
+
+        List<MenuVo> menuVos = getMenuVos(treeMenus);
+
+        return menuVos;
+    }
+
+    private List<SysMenu> loadChildren(List<SysMenu> menus,Map<Long, List<SysMenu>> sysMenuMap) {
+
+        List<SysMenu> treeMenus = menus.stream().map(sysMenu -> {
+            List<SysMenu> childrenMenuList = sysMenuMap.get(sysMenu.getMenuId());
+            if (childrenMenuList == null || childrenMenuList.isEmpty()) {
+                return sysMenu;
+            }
+            sysMenu.setChildren(loadChildren(childrenMenuList,sysMenuMap));
+            return sysMenu;
+        }).collect(Collectors.toList());
+        // 查询parentId为menuId的数据
+        return treeMenus;
+    }
+
+    private List<MenuVo> getMenuVos(List<SysMenu> sysMenus) {
+        return sysMenus.stream().map(i -> {
             MenuVo menuVo = new MenuVo();
-            menuVo.setName(getMenuName(i.getMenuName()));
+            menuVo.setName(getMenuName(i.getPath()));
             menuVo.setPath(getPath(i.getPath(), i.getParentId()));
             menuVo.setHidden(i.getVisible().equals("1"));
             menuVo.setComponent(getComp(i.getComponent(), i.getParentId(), i.getMenuType()));
 
             menuVo.setMeta(new MetaVo(i.getMenuName(), i.getIcon(), i.getIsCache() == 1));
 
-            menuVo.setChildren();
+            List<SysMenu> children = i.getChildren();
+            if (i.getParentId().equals(0L) && children != null && !children.isEmpty() && UserConstants.TYPE_DIR.equals(i.getMenuType())) {
+                menuVo.setRedirect("noRedirect");
+                menuVo.setAlwaysShow(true);
+                menuVo.setChildren(getMenuVos(children));
+            }
             return menuVo;
         }).collect(Collectors.toList());
-
-        return menuVos;
     }
 
     private String getComp(String component,long parentId,String menuType) {
@@ -167,8 +193,8 @@ public class LoginServiceImpl implements LoginService {
         }
     }
 
-    private String getMenuName(String menuName) {
-        return StringUtils.capitalize(menuName);
+    private String getMenuName(String path) {
+        return StringUtils.capitalize(path);
     }
 
     private LoginUser getCurUser() {

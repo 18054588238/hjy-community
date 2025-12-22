@@ -4,6 +4,7 @@ import com.personal.hjycommunitymodule.common.constant.UserConstants;
 import com.personal.hjycommunitymodule.common.core.controller.BaseController;
 import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.common.core.page.PageResult;
+import com.personal.hjycommunitymodule.common.utils.SecurityUtils;
 import com.personal.hjycommunitymodule.system.domain.SysDictType;
 import com.personal.hjycommunitymodule.system.service.SysDictTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class SysDictTypeController extends BaseController {
     public PageResult list(SysDictType dictType){
         startPage();
         List<SysDictType> list = sysDictTypeService.selectDictTypeList(dictType);
-        return getData(list);
+        return getPageResult(list);
     }
 
     /**
@@ -48,11 +49,12 @@ public class SysDictTypeController extends BaseController {
     @PostMapping
     public BaseResponse add(@RequestBody SysDictType sysDictType){
 
+        // 新增字典类型时，判断是否已存在
         if(UserConstants.NOT_UNIQUE.equals(sysDictTypeService.checkDictTypeUnique(sysDictType))){
             return BaseResponse.fail("新增字典" + sysDictType.getDictName() + "失败,字典类型已经存在");
         }
-        sysDictType.setCreateBy(SecurityUtils.getUserName());
-        return toAjax(sysDictTypeService.insertDictType(sysDictType));
+        sysDictType.setCreateBy(SecurityUtils.getCurUser().getUsername());
+        return getBaseResponse(sysDictTypeService.insertDictType(sysDictType));
     }
 
     /*
@@ -60,11 +62,12 @@ public class SysDictTypeController extends BaseController {
      */
     @PutMapping
     public BaseResponse edit(@RequestBody SysDictType sysDictType){
+        // 判断更新的字典类型是否已经存在
         if(UserConstants.NOT_UNIQUE.equals(sysDictTypeService.checkDictTypeUnique(sysDictType))){
             return BaseResponse.fail("修改字典" + sysDictType.getDictName() + "失败,字典类型已经存在");
         }
-        sysDictType.setUpdateBy(SecurityUtils.getUserName());
-        return toAjax(sysDictTypeService.updateDictType(sysDictType));
+        sysDictType.setUpdateBy(SecurityUtils.getCurUser().getUsername());
+        return getBaseResponse(sysDictTypeService.updateDictType(sysDictType));
     }
 
     /*
@@ -72,7 +75,7 @@ public class SysDictTypeController extends BaseController {
      */
     @DeleteMapping("/{dictIds}")
     public BaseResponse remove(@PathVariable Long[] dictIds){
-        return toAjax(sysDictTypeService.deleteDictTypeByIds(dictIds));
+        return getBaseResponse(sysDictTypeService.deleteDictTypeByIds(dictIds));
     }
 
     /**

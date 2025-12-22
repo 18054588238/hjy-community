@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +48,7 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
                 .collect(Collectors.groupingBy(SysDictData::getDictType));
 
         dictMap.forEach((dictType,dictDataList)->{
-            redisCache.setCacheList(dictType,dictDataList);
+            redisCache.setCacheList(getCacheKey(dictType),dictDataList);
         });
 
     }
@@ -86,6 +83,7 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
         //缓存没有,查询数据库
         dictData = dictDataMapper.selectDictDataByType(dictType);
         if(!Objects.isNull(dictData)){
+            // 存入缓存
             redisCache.setCacheObject(getCacheKey(dictType),dictData);
             return dictData;
         }
@@ -111,26 +109,29 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
      */
     @Override
     public int deleteDictTypeByIds(Long[] dictIds) {
+        Set<String> dictType = new HashSet<>();
         for (Long dictId : dictIds) {
             SysDictType sysDictType = selectDictTypeById(dictId);
-            //判断该类型下是否有对应的字典数据
+            // 判断该类型下是否有对应的字典数据 - 字典值被使用不允许删除
             if(dictDataMapper.countDictDataByType(sysDictType.getDictType()) > 0){
                 throw new CustomException(500,"已分配不能删除");
             }
+            dictType.add(Constants.SYS_DICT_KEY+sysDictType.getDictType());
         }
 
         int row = dictTypeMapper.deleteDictTypeByIds(dictIds);
         //删除成功,清除缓存
         if(row > 0){
-            clear();
+            clear(dictType);
         }
         return row;
     }
 
-    //清空缓存
-    private void clear(){
-        Collection<String> keys = redisCache.keys(Constants.SYS_DICT_KEY + "*");
-        redisCache.deleteObject(keys);
+    // 清空缓存 - 增、删、改时 都需要清理对应的缓存，否则取出的不是最新数据
+    private void clear(Collection<String> dictType){
+        // key: Constants.SYS_DICT_KEY + dictType
+
+        redisCache.deleteObject(dictType);
     }
 
     /**
@@ -140,8 +141,9 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
     public int insertDictType(SysDictType dictType) {
         int row = dictTypeMapper.insertDictType(dictType);
 
+        // 成功插入，清理缓存
         if(row > 0){
-            clear();
+            clear(Collections.singleton(Constants.SYS_DICT_KEY+dictType.getDictType()));
         }
         return row;
     }
@@ -155,14 +157,18 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
     @Transactional //执行多条SQL 添加事务注解
     public int updateDictType(SysDictType dictType) {
 
+        // 字典类型表和字典数据表都要修改 - 注意添加事务
+
         //修改字典数据表的字典类型
         SysDictType oldDict = dictTypeMapper.selectDictTypeById(dictType.getDictId());
+        // 修改字典数据表
         dictDataMapper.updateDictDataType(oldDict.getDictType(),dictType.getDictType());
-
         //修改字典类型表
         int row = dictTypeMapper.updateDictType(dictType);
+
         if(row > 0){
-            clear();
+            // 应该使用更新前的字典类型
+            clear(Collections.singleton(Constants.SYS_DICT_KEY + oldDict.getDictType()));
         }
         return row;
     }
@@ -173,17 +179,21 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
     @Override
     public String checkDictTypeUnique(SysDictType dictType) {
 
+        // 能查到说明存在，查不到说明不存在
         SysDictType sysDictType = dictTypeMapper.checkDictTypeUnique(dictType.getDictType());
         if(!Objects.isNull(sysDictType)){
-            return UserConstants.NOT_UNIQUE;
+            return UserConstants.NOT_UNIQUE; // 存在
         }
 
         return UserConstants.UNIQUE;
     }
 
+    // 清空所有字典的缓存
     @Override
     public void clearCache() {
-        clear();
+        // 通配符查找  * 匹配任意数量的字符
+        Collection<String> keys = redisCache.keys(Constants.SYS_DICT_KEY + "*");
+        clear(keys);
     }
 
 }

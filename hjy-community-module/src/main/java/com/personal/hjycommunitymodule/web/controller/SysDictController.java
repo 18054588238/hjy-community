@@ -3,6 +3,7 @@ package com.personal.hjycommunitymodule.web.controller;
 import com.personal.hjycommunitymodule.common.core.controller.BaseController;
 import com.personal.hjycommunitymodule.common.core.domain.BaseResponse;
 import com.personal.hjycommunitymodule.common.core.page.PageResult;
+import com.personal.hjycommunitymodule.common.utils.SecurityUtils;
 import com.personal.hjycommunitymodule.system.domain.SysDictData;
 import com.personal.hjycommunitymodule.system.service.SysDictDataService;
 import com.personal.hjycommunitymodule.system.service.SysDictTypeService;
@@ -61,8 +62,9 @@ public class SysDictController extends BaseController {
      */
     @PostMapping
     public BaseResponse add(@RequestBody SysDictData sysDictData){
-        sysDictData.setCreateBy(SecurityUtils.getUserName());
-        return toAjax(dictDataService.insertDictData(sysDictData));
+        // 获取当前登录用户
+        sysDictData.setCreateBy(SecurityUtils.getCurUser().getUsername());
+        return getBaseResponse(dictDataService.insertDictData(sysDictData));
     }
 
     /**
@@ -70,8 +72,8 @@ public class SysDictController extends BaseController {
      */
     @PutMapping
     public BaseResponse edit(@RequestBody SysDictData sysDictData){
-        sysDictData.setUpdateBy(SecurityUtils.getUserName());
-        return toAjax(dictDataService.updateDictData(sysDictData));
+        sysDictData.setUpdateBy(SecurityUtils.getCurUser().getUsername());
+        return getBaseResponse(dictDataService.updateDictData(sysDictData));
     }
 
     /**
@@ -80,6 +82,6 @@ public class SysDictController extends BaseController {
     @DeleteMapping("/{dictCodes}")
     public BaseResponse remove(@PathVariable Long[] dictCodes){
 
-        return toAjax(dictDataService.deleteDictDataByIds(dictCodes));
+        return getBaseResponse(dictDataService.deleteDictDataByIds(dictCodes));
     }
 }

@@ -8,6 +8,7 @@ import com.personal.hjycommunitymodule.common.core.exception.CustomException;
 import com.personal.hjycommunitymodule.common.utils.ChainedMap;
 import com.personal.hjycommunitymodule.common.utils.JWTUtils;
 import com.personal.hjycommunitymodule.common.utils.RedisCache;
+import com.personal.hjycommunitymodule.common.utils.SecurityUtils;
 import com.personal.hjycommunitymodule.community.domain.LoginUser;
 import com.personal.hjycommunitymodule.community.domain.SysMenu;
 import com.personal.hjycommunitymodule.community.domain.SysUser;
@@ -80,7 +81,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public BaseResponse logout() {
 
-        LoginUser loginUser = getCurUser();
+        LoginUser loginUser = SecurityUtils.getCurUser();
         Long userId = loginUser.getSysUser().getUserId();
         // 删除redis缓存
         boolean b = redisCache.deleteObject("login:" + userId);
@@ -93,7 +94,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public ChainedMap getInfo() {
         // 获取当前登录用户信息
-        LoginUser loginUser = getCurUser();
+        LoginUser loginUser = SecurityUtils.getCurUser();
 
         SysUser sysUser = loginUser.getSysUser();
         // 获取权限信息
@@ -112,7 +113,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public List<MenuVo> getRouters() {
         // 获取当前登录用户
-        LoginUser loginUser = getCurUser();
+        LoginUser loginUser = SecurityUtils.getCurUser();
         Long userId = loginUser.getSysUser().getUserId();
 
         // 当前用户所拥有的菜单权限 - 需要去掉 “按钮”菜单
@@ -197,11 +198,4 @@ public class LoginServiceImpl implements LoginService {
         return StringUtils.capitalize(path);
     }
 
-    private LoginUser getCurUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (Objects.isNull(authentication)) {
-            throw new CustomException(401,"获取用户认证信息失败,请重新登录!");
-        }
-        return (LoginUser) authentication.getPrincipal();
-    }
 }

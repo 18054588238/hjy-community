@@ -1,5 +1,6 @@
 package com.personal.hjycommunitymodule.common.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -62,7 +63,8 @@ public class ServletUtils {
      */
     public static Integer getParameterToInt(String name)
     {
-        return Integer.parseInt(getRequest().getParameter(name));
+        String parameter = getRequest().getParameter(name);
+        return StringUtils.isNotBlank(parameter) ? Integer.parseInt(parameter):1;
     }
 
     /**

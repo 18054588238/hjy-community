@@ -38,10 +38,14 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
 
     /** 缓存预热
      * 项目启动时 初始化字典数据到缓存 - 根据字典类型缓存数据
+     * PostConstruct注解  标记一个方法在 Bean 初始化完成、依赖注入之后，但在 Bean 投入使用之前 被执行
+     * 静态代码块：无法访问spring容器中的bean
+     * PostConstruct注解的方法：可以访问依赖注入的属性和其他bean
      */
-    @PostConstruct // 标记一个方法在 Bean 初始化完成、依赖注入之后，但在 Bean 投入使用之前 被执行
+    @PostConstruct
     public void init(){
-
+        // 先清除
+        clearCache();
         LambdaQueryWrapper<SysDictData> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysDictData::getStatus,"0");
         Map<String, List<SysDictData>> dictMap = dictDataMapper.selectList(wrapper).stream()
@@ -75,14 +79,14 @@ public class SysDictTypeServiceImpl implements SysDictTypeService {
     public List<SysDictData> selectDictDataByType(String dictType) {
 
         //先从缓存获取
-        List<SysDictData> dictData = redisCache.getCacheObject(getCacheKey(dictType));
-        if(!Objects.isNull(dictData)){
+        List<SysDictData> dictData = redisCache.getCacheList(getCacheKey(dictType));
+        if(Objects.nonNull(dictData)){
             return dictData;
         }
 
         //缓存没有,查询数据库
         dictData = dictDataMapper.selectDictDataByType(dictType);
-        if(!Objects.isNull(dictData)){
+        if(Objects.nonNull(dictData)){
             // 存入缓存
             redisCache.setCacheObject(getCacheKey(dictType),dictData);
             return dictData;

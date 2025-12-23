@@ -1,19 +1,25 @@
 package com.personal.hjycommunitymodule.system.domain;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.personal.hjycommunitymodule.common.core.domain.BaseEntity;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 字典类型表
  * @author spikeCong
  * @date 2023/5/19
  **/
+@Data
 public class SysDictType extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -36,6 +42,13 @@ public class SysDictType extends BaseEntity {
     private String status;
 
     private String remark;
+
+    @TableField(exist = false)
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+    private String beginTime;
+    @TableField(exist = false)
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+    private String endTime;
 
     @Override
     public String getRemark() {
